@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "na.library.grpcweather.proto";
+option java_outer_classname = "WeatherProto";
+
+package weather;
+
+// Weather Service definition
+service WeatherService {
+  // Unary RPC - Get current weather for a location (request-> response)
+  rpc GetCurrentWeather(LocationRequest) returns (WeatherResponse) {}
+
+  // Server Streaming RPC - Get weather forecast updates (request -> multiple response)
+  rpc GetWeatherForecast(LocationRequest) returns (stream WeatherResponse) {}
+
+  // Client Streaming RPC - Submit multiple location readings
+  rpc SubmitWeatherData(stream WeatherData) returns (SubmitResponse) {}
+
+  // Bidirectional Streaming RPC - Real-time weather monitoring with alerts
+  rpc MonitorWeather(stream LocationRequest) returns (stream WeatherAlert) {}
+}
+
+// Request message containing the location
+message LocationRequest {
+  string city = 1;
+  string country = 2;
+}
+// Weather response containing weather details
+message WeatherResponse {
+  string location = 1;
+  float temperature = 2;
+  string description = 3;
+  float humidity = 4;
+  float wind_speed = 5;
+  string timestamp = 6;
+}
+
+// Weather data to be submitted
+message WeatherData {
+  string location = 1;
+  float temperature = 2;
+  float humidity = 3;
+  float pressure = 4;
+  float wind_speed = 5;
+  string timestamp = 6;
+}
+
+// Response after submitting weather data
+message SubmitResponse {
+  bool success = 1;
+  int32 records_processed = 2;
+  string message = 3;
+}
+
+// Weather alert message
+message WeatherAlert {
+  string location = 1;
+  string alert_type = 2; // e.g., STORM, HEAT_WAVE, FLOOD, etc.
+  string description = 3;
+  string severity = 4; // LOW, MEDIUM, HIGH, SEVERE
+  string timestamp = 5;
+}
